@@ -1,0 +1,270 @@
+﻿Le Guerrier
+Voulez vous instaurer un service militaire obligatoire ?
+Oui
+0
+-10
+10
+0
+Non
+0
+10
+-10
+0
+epeeguerrier.wav
+guerrier.png
+#
+Le Guerrier
+Veux tu attaquer le village de Velen ?
+A l'attaque !
+0
+-10
+10
+0
+Ce sont des alliés !
+0
+10
+-10
+0
+epeeguerrier.wav
+guerrier.png
+#
+Le Baron
+Le roi de l'Ouest offre une large somme pour acheter une partie du royaume
+Oui
+0
+-20
+0
+20
+Non
+0
+0
+0
+-5
+epee.wav
+baron.png
+#
+Le Bourreau
+Vous devriez créer un musée des science. je pourrai y consacrer un peu de mon temps.
+Oui
+0
+5
+0
+-5
+Non
+0
+-5
+0
+0
+epeebourreau.wav
+bourreau.png
+#
+Le Pigeon
+Le message dit: Un village du Sud encourage la polygamie.
+Envoyez l'Eglise.
+10
+0
+0
+0
+Envoyer l'armée.
+0
+0
+-10
+0
+pigeon.wav
+pigeon.png
+#
+L'Evêque
+Les paysans se révoltent, c'est une jacquerie ! Ils s'en prennent à la capitale, l'armée est dépassée.
+Renforcez l'armée !
+0
+-10
+25
+-20
+Fermez les portes du chateau !
+-10
+30
+-15
+0
+cloche.wav
+pretre.png
+#
+Le Baron
+Le Roi de l'Est a été informé de l'état de notre armée et prépare une attaque !
+Mobilisez et attaquez
+0
+-15
+25
+-15
+Battez en retraite
+0
+5
+5
+0
+epee.wav
+baron.png
+#
+Le Guerrier
+Attaquons le royaume du Sud ! Leur pouvoir s'étend un peu plus chaque jour
+Oui
+0
+0
+-10
+0
+Non
+0
+0
+5
+0
+epeeguerrier.wav
+guerrier.png
+#
+Le Guerrier
+Les revenus des soldats sont trop bas. Il faut les payer correctement et régulierement.
+Oui
+0
+0
+15
+-15
+Non
+0
+0
+-15
+0
+epeeguerrier.wav
+guerrier.png
+#
+Le Baron
+Votre main est promise à la Reine du Sud. Voulez vous vous marier ? Nous risquons la guerre.
+Préparez les noces !
+5
+5
+5
+5
+Hors de question de me marier.
+0
+-10
+0
+0
+epee.wav
+baron.png
+#
+Le Paysan
+Les mineurs refusent de creuser plus profondément. Ils veulent être augmentés.
+Oui
+0
+10
+0
+-15
+Non
+0
+-10
+0
+5
+cheval.wav
+paysan.png
+#
+Le Paysan
+Les mines sont remplies d'or Monseigneur !
+Nous sommes riches !
+5
+5
+5
+5
+Je suis riche !
+0
+0
+0
+30
+cheval.wav
+paysan.png
+#
+Le Guerrier
+Il nous faut plus d'argent pour détruire les infidèles, Monseigneur.
+Oui
+15
+0
+15
+-10
+Non
+-15
+0
+-10
+0
+epeeguerrier.wav
+guerrier.png
+#
+Le Guerrier
+Il faut être prêt à tout. Nous devons recruter plus de soldat !
+Non
+0
+0
+-30
+0
+Oui
+0
+0
+30
+-30
+epeeguerrier.wav
+guerrier.png
+#
+Le Prêtre
+Longue vie au Roi ! Je vais prier pour la prospérité de Votre Majesté.
+Oui
+20
+0
+0
+-10
+Non
+-20
+0
+0
+10
+cloche.wav
+pretre.png
+#
+Le Paysan
+Votre docteur réalise des expériences hérétiques dans une secrète. Il faut l'arrêter !
+Oui
+30
+0
+0
+0
+Non
+-30
+0
+0
+0
+cheval.wav
+paysan.png
+#
+Le Prêtre
+Dieu m'a parlé ! Nous devons trouver le Saint Graal a tout prix !
+Oui
+30
+-10
+0
+-10
+Non
+-30
+10
+0
+0
+cloche.wav
+pretre.png
+#
+Le Boufon
+Nous devrions systématiquement accuser les migrants Iliens de tout ce qui ne va pas dans le royaume.
+Oui
+10
+10
+10
+-20
+Non
+0
+10
+0
+0
+rire.wav
+boufon.png
+#
