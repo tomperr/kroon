@@ -162,8 +162,7 @@ public final class Fenetre extends JFrame implements ActionListener
             // On crée les éléments
             creerElements();
         }
-        
-        if (isPlaying) // Si la partie est en cours
+        else if (isPlaying) // Si la partie est en cours
         {
             // Jouer le son
             try 
