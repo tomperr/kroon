@@ -214,7 +214,7 @@ public final class Fenetre extends JFrame implements ActionListener
             creerElements();
         }
         
-        if (check(STAT_EGLISE, STAT_PEUPLE, STAT_ARMEE, STAT_FINANCE))
+        if (check())
         {
             // Si les statistiques sont toutes entre 0 et 100
             // Le jeu continue
@@ -227,30 +227,7 @@ public final class Fenetre extends JFrame implements ActionListener
             pan.setImgCarte(ma_carte.getChemin_image());
             refresh();
             
-            // On sauvegarde la positions (x, y) de la souris au moment du click
-            informations_souris = MouseInfo.getPointerInfo();
-            position_souris = informations_souris.getLocation();
-            x = (int) position_souris.getX();
-            y = (int) position_souris.getY();
-            
-            // On déclare un robot, qui pourra modifier la position de la souris
-            try {
-                mon_robot = new Robot();
-            }
-            // Gestion d'une erreur possible
-            catch (AWTException ex) 
-            {
-                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            /*
-            On fait sortir la souris du bouton, puis on la replace à sa position
-            au moment du click.
-            Cela a pour effet de mettre a jour la couleur des JLabel eglise, peuple, armee, finance
-            en "appelant" les êvenements permettant leur coloration 
-            */
-            mon_robot.mouseMove(1,1);
-            mon_robot.mouseMove(x, y); 
+            bouger_souris();
         }
         else
         {
@@ -259,6 +236,7 @@ public final class Fenetre extends JFrame implements ActionListener
             pan.setImgCarte("mort.png");
             refresh();
             finish();
+            bouger_souris();
         }
         
     }
@@ -576,31 +554,95 @@ public final class Fenetre extends JFrame implements ActionListener
         refresh();
     }
     
-    public boolean check(int stat_eglise, int stat_peuple, int stat_armee, int stat_finance)
+    public boolean check()
     {
         /* 
         fonction permettant de verifier si les stats sont bien entre ]0;100[ 
         et ainsi faire continuer le jeu.
+            private int STAT_EGLISE = 50;
+    private int STAT_PEUPLE = 50;
+    private int STAT_ARMEE = 50;
+    private int STAT_FINANCE = 50;
         */
         
         boolean check = true;
-        if (stat_eglise <=0 || stat_eglise >= 100)
+        if (STAT_EGLISE <=0 || STAT_EGLISE >= 100)
         {
             check = false;
+            if (STAT_EGLISE <=0)
+            {
+                STAT_EGLISE = 0;
+            }
+            else
+            {
+                STAT_EGLISE = 100;
+            }
         }
-        if (stat_peuple <=0 || stat_peuple >= 100)
+        if (STAT_PEUPLE <=0 || STAT_PEUPLE >= 100)
         {
             check = false;
+            if (STAT_PEUPLE <=0)
+            {
+                STAT_PEUPLE = 0;
+            }
+            else
+            {
+                STAT_PEUPLE = 100;
+            }
         }
-        if (stat_armee <=0 || stat_armee >= 100)
+        if (STAT_ARMEE <=0 || STAT_ARMEE >= 100)
         {
             check = false;
+            if (STAT_ARMEE <=0)
+            {
+                STAT_ARMEE = 0;
+            }
+            else
+            {
+                STAT_ARMEE = 100;
+            }
         }
-        if (stat_finance <=0 || stat_finance >= 100)
+        if (STAT_FINANCE <=0 || STAT_FINANCE >= 100)
         {
             check = false;
+            if (STAT_FINANCE <=0)
+            {
+                STAT_FINANCE = 0;
+            }
+            else
+            {
+                STAT_FINANCE = 100;
+            }
         }
         return check;
+    }
+    
+    public void bouger_souris()
+    {
+        // On sauvegarde la positions (x, y) de la souris au moment du click
+            informations_souris = MouseInfo.getPointerInfo();
+            position_souris = informations_souris.getLocation();
+            x = (int) position_souris.getX();
+            y = (int) position_souris.getY();
+            
+            // On déclare un robot, qui pourra modifier la position de la souris
+            try {
+                mon_robot = new Robot();
+            }
+            // Gestion d'une erreur possible
+            catch (AWTException ex) 
+            {
+                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            /*
+            On fait sortir la souris du bouton, puis on la replace à sa position
+            au moment du click.
+            Cela a pour effet de mettre a jour la couleur des JLabel eglise, peuple, armee, finance
+            en "appelant" les êvenements permettant leur coloration 
+            */
+            mon_robot.mouseMove(1,1);
+            mon_robot.mouseMove(x, y); 
     }
 
 }
