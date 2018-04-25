@@ -40,7 +40,7 @@ public final class Fenetre extends JFrame implements ActionListener
     private int STAT_ARMEE = 50;
     private int STAT_FINANCE = 50;
     
-    private JButton bouton1, bouton2, bouton_debut;
+    private JButton bouton1, bouton2, bouton_facile, bouton_difficile;
     private JLabel titre, eglise, peuple, armee, finance, nom, nom_eglise, nom_peuple, nom_armee, nom_finance, label_compteur;
     private Panneau pan;
     private PanneauIntro pan_debut;
@@ -60,6 +60,11 @@ public final class Fenetre extends JFrame implements ActionListener
     
     private Robot mon_robot;
     private Sound son_bruitages;
+    
+    private boolean difficulté; // False si facile, true si difficile
+    
+    private Color couleur_positive;
+    private Color couleur_negative;
     
     public Fenetre(Carte[] cartes) throws UnsupportedAudioFileException, IOException, LineUnavailableException
     {        
@@ -95,13 +100,17 @@ public final class Fenetre extends JFrame implements ActionListener
                 + " de votre royaume. Votre objectif sera de maintenir l'équilibre"
                 + " entre ces 4 valeurs. Bonne chance jeune Roi !");
         
-        bouton_debut = new JButton("OK");
-        bouton_debut.setEnabled(true);
-        bouton_debut.addActionListener(this);
+        bouton_facile = new JButton("Facile");
+        bouton_facile.addActionListener(this);
+        bouton_facile.setBounds(200, 600, 200, 50);
+        
+        bouton_difficile = new JButton("Difficile");
+        bouton_difficile.addActionListener(this);
+        bouton_difficile.setBounds(600, 600, 200, 50);
+
         
         titre.setBounds(450, 50, 100, 100);
         titre.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 15));
-        bouton_debut.setBounds(400, 600, 200, 50);
         explication.setBounds(100, 250, 800, 400);
         explication.setEditable(false);  
         explication.setCursor(null);  
@@ -113,7 +122,8 @@ public final class Fenetre extends JFrame implements ActionListener
         
         pan_debut.setLayout(null);
         
-        pan_debut.add(bouton_debut);
+        pan_debut.add(bouton_facile);
+        pan_debut.add(bouton_difficile);
         pan_debut.add(titre);
         pan_debut.add(explication);
         
@@ -130,88 +140,75 @@ public final class Fenetre extends JFrame implements ActionListener
         // Obtention de la source du click
         Object source = e.getSource();
         
-        if  (source == bouton1)
-        {
-            // Bouton de gauche
-            if (isPlaying)
-            {
-                try {
-                    // Si la partie est en cours
-                    // Action "oui"
-                    son_bruitages.setSon("src/sound/" + ma_carte.getChemin_son());
-                }
-                // Gestion des différentes erreurs possibles
-                catch (UnsupportedAudioFileException ex) 
-                {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-                catch (IOException ex) 
-                {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-                catch (LineUnavailableException ex) 
-                {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                son_bruitages.start();
-                changerStats(ma_carte.getOui_eglise(), ma_carte.getOui_peuple(), ma_carte.getOui_armee(), ma_carte.getOui_finance());
-            }
-            else
-            {
-                // Si c'est l'écran de fin
-                // Fermer la fenêtre
-                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-            }
-        }
-        else if (source == bouton2)
-        {
-            // Bouton de droite
-            if (isPlaying)
-            {
-                try {
-                    // Si la partie est en cours
-                    // Bouton non
-                    
-                    // Modification du son à jouer
-                    son_bruitages.setSon("src/sound/" + ma_carte.getChemin_son());
-                }
-                // Gestion des différentes erreurs possibles
-                catch (UnsupportedAudioFileException ex) 
-                {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-                catch (IOException ex) 
-                {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-                catch (LineUnavailableException ex) 
-                {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                // Jouer le son
-                son_bruitages.start();
-                
-                // Changer les statistiques
-                changerStats(ma_carte.getNon_eglise(), ma_carte.getNon_peuple(), ma_carte.getNon_armee(), ma_carte.getNon_finance());    
-            }
-            else
-            {
-                // Si c'est l'écran de fin
-                // Relancer une partie
-                restart();
-            }
-        }
-        else if (source == bouton_debut) // Si le bouton pressé est celui de l'écran d'introduction
+        
+        if (isBeginning) // Si la partie n'a pas encore commencé
         {
             // On indique que l'introduction est terminé et que la partie commence
             isBeginning = false;
             isPlaying = true;
+            
+            if (source == bouton_facile)
+            {
+                difficulté = false;  // Facile
+            }
+            else
+            {
+                difficulté = true; // Difficile
+            }
             
             // On supprime le panneau contenant les éléments de l'introduction
             contenant.remove(pan_debut);
             
             // On crée les éléments
             creerElements();
+        }
+        
+        if (isPlaying) // Si la partie est en cours
+        {
+            // Jouer le son
+            try 
+            {
+                son_bruitages.setSon("src/sound/" + ma_carte.getChemin_son());
+            }
+            // Gestion des différentes erreurs possibles
+            catch (UnsupportedAudioFileException ex) 
+            {
+                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            catch (IOException ex) 
+            {
+                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            catch (LineUnavailableException ex) 
+            {
+                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            son_bruitages.start();
+            
+            if (source == bouton1) // Bouton de gauche
+            {
+                // Changer les statistiques
+                changerStats(ma_carte.getOui_eglise(), ma_carte.getOui_peuple(), ma_carte.getOui_armee(), ma_carte.getOui_finance());
+            }
+            else // Bouton de droite
+            {
+                // Changer les statistiques
+                changerStats(ma_carte.getNon_eglise(), ma_carte.getNon_peuple(), ma_carte.getNon_armee(), ma_carte.getNon_finance()); 
+            }
+        }
+        else if (isEnd) // Si on est sur l'écran de fin
+        {
+            if (source == bouton1) // Bouton de gauche : Quitter
+            {
+                // Fermer la fenêtre
+                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            }
+            else // Bouton de droite : Rejouer
+            {
+                // Si c'est l'écran de fin
+                // Relancer une partie
+                restart();
+            }
         }
         
         if (check())
@@ -290,6 +287,17 @@ public final class Fenetre extends JFrame implements ActionListener
                 if (isPlaying)
                 {
                     
+                    if (!difficulté) // Si en mode facile
+                    {
+                        couleur_positive = Color.green;
+                        couleur_negative = Color.red;
+                    }
+                    else // Si en mode difficile
+                    {
+                        couleur_positive = Color.blue;
+                        couleur_negative = Color.blue;
+                    }
+                    
                     // Obtention de la source
                     Object source = e.getSource();
                     
@@ -298,76 +306,76 @@ public final class Fenetre extends JFrame implements ActionListener
                     {
                         if (ma_carte.getOui_eglise()>0)
                         {
-                            eglise.setForeground(Color.green);
+                            eglise.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getOui_eglise()<0)
                         {
-                            eglise.setForeground(Color.red);
+                            eglise.setForeground(couleur_negative);
                         }
 
                         if (ma_carte.getOui_peuple()>0)
                         {
-                            peuple.setForeground(Color.green);
+                            peuple.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getOui_peuple()<0)
                         {
-                            peuple.setForeground(Color.red);
+                            peuple.setForeground(couleur_negative);
                         }                               
 
                         if (ma_carte.getOui_armee()>0)
                         {
-                            armee.setForeground(Color.green);
+                            armee.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getOui_armee()<0)
                         {
-                            armee.setForeground(Color.red);
+                            armee.setForeground(couleur_negative);
                         }            
 
                         if (ma_carte.getOui_finance()>0)
                         {
-                            finance.setForeground(Color.green);
+                            finance.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getOui_finance()<0)
                         {
-                            finance.setForeground(Color.red);
+                            finance.setForeground(couleur_negative);
                         }
                     }
                     else // Sinon (bouton "non")
                     {
                         if (ma_carte.getNon_eglise()>0)
                         {
-                            eglise.setForeground(Color.green);
+                            eglise.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getNon_eglise()<0)
                         {
-                            eglise.setForeground(Color.red);
+                            eglise.setForeground(couleur_negative);
                         }
 
                         if (ma_carte.getNon_peuple()>0)
                         {
-                            peuple.setForeground(Color.green);
+                            peuple.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getNon_peuple()<0)
                         {
-                            peuple.setForeground(Color.red);
+                            peuple.setForeground(couleur_negative);
                         }                               
 
                         if (ma_carte.getNon_armee()>0)
                         {
-                            armee.setForeground(Color.green);
+                            armee.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getNon_armee()<0)
                         {
-                            armee.setForeground(Color.red);
+                            armee.setForeground(couleur_negative);
                         }            
 
                         if (ma_carte.getNon_finance()>0)
                         {
-                            finance.setForeground(Color.green);
+                            finance.setForeground(couleur_positive);
                         }
                         else if (ma_carte.getNon_finance()<0)
                         {
-                            finance.setForeground(Color.red);
+                            finance.setForeground(couleur_negative);
                         }
                     }
                 }
