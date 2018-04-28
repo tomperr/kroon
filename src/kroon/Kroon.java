@@ -15,6 +15,7 @@ public class Kroon
     
     private static BufferedReader fR;
     private static String chemin_carte = "src/cartes/cartes.txt";
+    private static String chemin_sauvegarde = "src/sauvegarde/score.txt";
         
     public static void main(String[] args) throws FileNotFoundException, IOException, UnsupportedAudioFileException, LineUnavailableException 
     {        
@@ -67,9 +68,15 @@ public class Kroon
         
         // On ferme le canal
         fR.close();     
+        
+        // Ouverture du canal de lecture pour le fichier de sauvegarde
+        fR = new BufferedReader(new FileReader(new File(chemin_sauvegarde)));
+        
+        int score_facile = Integer.parseInt(lecture(fR));
+        int score_difficile = Integer.parseInt(lecture(fR));
 
         // Ouverture de la fenêtre (interface graphique)
-        Fenetre fenetre = new Fenetre(mes_cartes);
+        Fenetre fenetre = new Fenetre(mes_cartes, score_facile, score_difficile, chemin_sauvegarde);
 
     }
     

@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 
 // Librairies pour les élements de la fenêtre
 import javax.swing.JButton;
@@ -41,7 +44,7 @@ public final class Fenetre extends JFrame implements ActionListener
     private int STAT_FINANCE = 50;
     
     private JButton bouton1, bouton2, bouton_facile, bouton_difficile;
-    private JLabel titre, eglise, peuple, armee, finance, nom, nom_eglise, nom_peuple, nom_armee, nom_finance, label_compteur;
+    private JLabel titre, eglise, peuple, armee, finance, nom, nom_eglise, nom_peuple, nom_armee, nom_finance, label_compteur, high_score;
     private Panneau pan;
     private PanneauIntro pan_debut;
     private Container contenant;
@@ -66,7 +69,14 @@ public final class Fenetre extends JFrame implements ActionListener
     private Color couleur_positive;
     private Color couleur_negative;
     
-    public Fenetre(Carte[] cartes) throws UnsupportedAudioFileException, IOException, LineUnavailableException
+    private String chemin_score;
+    private int score_facile;
+    private int score_difficile;
+    private boolean score_modifié = false;
+    
+    private BufferedWriter fW;
+        
+    public Fenetre(Carte[] cartes, int score_f, int score_d, String path) throws UnsupportedAudioFileException, IOException, LineUnavailableException
     {        
         // Cette fonction est ce qu'on appelle un constructeur
         // Elle est appellé une seule fois : au moment où la fenêtre est créer (dans le main)
@@ -80,6 +90,11 @@ public final class Fenetre extends JFrame implements ActionListener
         // On stocke le tableaux de cartes dans une variable utilisable dans la fenêtre
         mes_cartes = cartes;
         choisirCarte(mes_cartes);
+        
+        // On récupère les scores
+        score_facile = score_f;
+        score_difficile = score_d;
+        chemin_score = path;
         
         // On ajoute le son en arrière plan
         Sound son_background = new Sound();
@@ -199,6 +214,18 @@ public final class Fenetre extends JFrame implements ActionListener
         {
             if (source == bouton1) // Bouton de gauche : Quitter
             {
+                // Sauvegarde si c'est nécessaire
+                if (score_modifié)
+                {
+                    try {
+                        sauvegarde();
+                    } 
+                    catch (IOException ex) 
+                    {
+                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
                 // Fermer la fenêtre
                 dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             }
@@ -534,6 +561,37 @@ public final class Fenetre extends JFrame implements ActionListener
         // Modification du texte
         texte.setText("Votre royaume est tombé ! Vous avez survécu " + compteur_annees + " ans.");
         
+        high_score = new JLabel();
+        high_score.setFont(high_score.getFont().deriveFont(18f));
+
+        
+        // Ajout du high score sur l'écran de fin
+        if (!difficulté)
+        {
+            if (compteur_annees > score_facile)
+            {
+                score_modifié = true;
+                score_facile = compteur_annees;
+            }
+                
+            high_score.setText("Meilleur score : " + Integer.toString(score_facile));
+
+        }
+        else
+        {
+            if (compteur_annees > score_difficile)
+            {
+                score_modifié = true;
+                score_difficile = compteur_annees;
+            }
+            high_score.setText("Meilleur score : " + Integer.toString(score_difficile));
+
+        }
+        
+        // On positionne le high score et on l'ajoute
+        high_score.setBounds(750, 50, 250, 20);
+        pan.add(high_score);
+        
         // Raffraichissement
         pan.repaint();
     }
@@ -558,6 +616,10 @@ public final class Fenetre extends JFrame implements ActionListener
         
         // Selection d'une carte, et le jeu recommence
         choisirCarte(mes_cartes);
+        
+        // On enlève le JLabel du score maximum
+        pan.remove(high_score);
+        
         refresh();
     }
     
@@ -627,29 +689,44 @@ public final class Fenetre extends JFrame implements ActionListener
     public void bouger_souris()
     {
         // On sauvegarde la positions (x, y) de la souris au moment du click
-            informations_souris = MouseInfo.getPointerInfo();
-            position_souris = informations_souris.getLocation();
-            x = (int) position_souris.getX();
-            y = (int) position_souris.getY();
-            
-            // On déclare un robot, qui pourra modifier la position de la souris
-            try {
-                mon_robot = new Robot();
-            }
-            // Gestion d'une erreur possible
-            catch (AWTException ex) 
-            {
-                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            /*
-            On fait sortir la souris du bouton, puis on la replace à sa position
-            au moment du click.
-            Cela a pour effet de mettre a jour la couleur des JLabel eglise, peuple, armee, finance
-            en "appelant" les êvenements permettant leur coloration 
-            */
-            mon_robot.mouseMove(1,1);
-            mon_robot.mouseMove(x, y); 
+        informations_souris = MouseInfo.getPointerInfo();
+        position_souris = informations_souris.getLocation();
+        x = (int) position_souris.getX();
+        y = (int) position_souris.getY();
+
+        // On déclare un robot, qui pourra modifier la position de la souris
+        try {
+            mon_robot = new Robot();
+        }
+        // Gestion d'une erreur possible
+        catch (AWTException ex) 
+        {
+            Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        /*
+        On fait sortir la souris du bouton, puis on la replace à sa position
+        au moment du click.
+        Cela a pour effet de mettre a jour la couleur des JLabel eglise, peuple, armee, finance
+        en "appelant" les êvenements permettant leur coloration 
+        */
+        mon_robot.mouseMove(1,1);
+        mon_robot.mouseMove(x, y); 
+    }
+    
+    public void sauvegarde() throws IOException
+    {
+        // Ouverture du canal d'écriture
+        fW = new BufferedWriter(new FileWriter(new File(chemin_score)));
+        
+        // Ecriture des scores
+        fW.write(Integer.toString(score_facile));
+        fW.newLine();
+        fW.write(Integer.toString(score_difficile));
+        fW.newLine();
+        
+        // Fermeture du canal d'écriture
+        fW.close();
     }
 
 }
